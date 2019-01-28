@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl" 
+				  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+				  xmlns:tns="http://jw.nju.edu.cn/wsdl" 
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  targetNamespace="http://jw.nju.edu.cn/wsdl">
+				  
+				  
+  <!-- 
+  author:zhr
+  description要声明import的xsd的命名空间
+  types中定义各种参数
+   -->
+				  
+  <wsdl:types>
+  	<xsd:schema xmlns:myschema="http://jw.nju.edu.cn/schema"
+  				xmlns="http://www.w3.org/2001/XMLSchema"
+  				targetNamespace="http://jw.nju.edu.cn/wsdl">
+  		<xsd:import 
+  			namespace="http://jw.nju.edu.cn/schema"
+  			schemaLocation="../xsd/PersonInfo.xsd" />
+  			
+  		<!-- 定义错误信息 -->
+  		<xsd:element name="invalidDataError" type="string"></xsd:element>
+  		
+  		<!-- get指查询信息，request是学号，response是personinfo -->
+  		<xsd:element name="get" type="string"/>
+  		<xsd:element name="getResponse" type="myschema:个人基本信息类型"></xsd:element>
+  		
+  		<!-- modify指修改信息，request是personinfo，response是string字符 -->
+  		<xsd:element name="modify" type="myschema:个人基本信息类型"/>
+  		<xsd:element name="modifyResponse" type="string"></xsd:element>
+  		
+  		<!-- add指添加信息，request是personinfo，response是string字符串 -->
+  		<xsd:element name="add" type="myschema:个人基本信息类型"></xsd:element>
+  		<xsd:element name="addResponse" type="string"></xsd:element>
+  		
+  		<!-- delete指删除信息，request是学号，response是string字符串 -->
+  		<xsd:element name="delete" type="string"/>
+  		<xsd:element name="deleteResponse" type="string"></xsd:element>
+  		
+  	</xsd:schema>
+  </wsdl:types>
+  	
+  <!-- 查询 -->
+  <wsdl:interface name="personInfoManagementInterface">
+    <!-- 出错信息，已在types中定义 -->
+  	<wsdl:fault name="invalidDataFault" 
+  				element="tns:invalidDataError"></wsdl:fault>
+    <!-- 查询信息 -->
+    <wsdl:operation name="getPersonInfo"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:get"/>
+      <wsdl:output messageLabel="Out" element="tns:getResponse"/>
+    </wsdl:operation> 
+    
+    <!-- 修改信息 -->
+    <wsdl:operation name="modifyPersonInfo"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:modify"/>
+      <wsdl:output messageLabel="Out" element="tns:modifyResponse"/>
+    </wsdl:operation>
+    
+    <!-- 添加信息 -->
+    <wsdl:operation name="addPersonInfo"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:add"/>
+      <wsdl:output messageLabel="Out" element="tns:addResponse"/>
+    </wsdl:operation>
+    
+    <!-- 删除信息 -->
+    <wsdl:operation name="deletePersonInfo"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:delete"/>
+      <wsdl:output messageLabel="Out" element="tns:deleteResponse"/>
+    </wsdl:operation> 
+    
+    
+  </wsdl:interface>
+  
+  <!-- soap绑定 -->
+  <wsdl:binding name="personInfoManagementSOAPBinding" 
+  				interface="tns:personInfoManagementInterface"
+  				type="http://www.w3.org/ns/wsdl/soap"
+  				wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <wsdl:operation ref="tns:getPersonInfo"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:modifyPersonInfo"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:addPersonInfo"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:deletePersonInfo"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+  </wsdl:binding>
+  
+  <!-- 
+  name设成具体的webservice类名，interface是上面定义的interface
+  binding用上面定义的binding
+  address是服务器的地址
+   -->
+  <wsdl:service name="personInfoManagementService"
+  				interface="tns:personInfoManagementInterface">
+  	<wsdl:endpoint name="personInfoManagementEndpoint"
+  				   binding="personInfoManagementSOAPBinding"
+  				   address="http://localhost:8080/personInfoManagement"/>    
+  </wsdl:service>
+  
+</wsdl:description>

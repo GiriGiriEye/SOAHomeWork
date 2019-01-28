@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://jw.nju.edu.cn/schema" xmlns:tns="http://jw.nju.edu.cn/schema"  elementFormDefault="qualified">
+
+	<!-- 引用Department.xsd -->
+	<include schemaLocation="./Department.xsd"></include>
+	
+	<!-- 定义个人基本信息，它的type是个人基本信息类型，在下面有定义 -->
+    <element name="个人基本信息" type="tns:个人基本信息类型"></element>
+	
+	<!-- 定义姓别，限定为男或女的string字符 -->
+	<simpleType name="性别类型">
+		<restriction base="string">
+			<pattern value="男|女"></pattern>
+		</restriction>
+	</simpleType>
+	
+	<!-- 这里定义详细的个人基本信息类型 -->
+	<complexType name="个人基本信息类型">
+		<sequence>
+			<element name="姓名" type="string"></element>  <!-- 定义姓名，type是string -->
+			<element name="性别" type="tns:性别类型"></element> <!-- 性别类型在上面定义了 -->
+			<element name="出生日期" type="date"></element>  <!-- 定义出生日期，type是date -->
+			<element name="所属部门" type="tns:部门类型"></element>  <!--定义所属部门。type是tns:部门类型，因为是引用的Department里的 -->
+		</sequence>
+	</complexType>
+
+</schema>

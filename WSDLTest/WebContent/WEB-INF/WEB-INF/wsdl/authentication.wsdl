@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl" 
+				  xmlns:whttp="http://www.w3.org/ns/wsdl/http" 
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+				  xmlns:tns="http://jw.nju.edu.cn/wsdl" 
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  targetNamespace="http://jw.nju.edu.cn/wsdl">
+				  
+				  
+  <!-- 
+  author:zhr
+  description要声明import的xsd的命名空间
+  types中定义各种参数
+   -->
+				  
+  <wsdl:types>
+  	<xsd:schema xmlns:myschema="http://jw.nju.edu.cn/schema"
+  				xmlns="http://www.w3.org/2001/XMLSchema"
+  				targetNamespace="http://jw.nju.edu.cn/wsdl">
+  			
+  		<!-- 定义错误信息 -->
+  		<xsd:element name="invalidDataError" type="string"></xsd:element>
+  		
+  		
+  		<!-- 使用用户名和密码做认证 -->
+  		<xsd:element name="userDetail" type="myschema:userDetailType"></xsd:element>
+  		<xsd:element name="userDetailResponse" type="string"></xsd:element>
+  		
+  		<xsd:element name="logoutResponse" type="string"></xsd:element>
+  		
+  		<!-- userDetailType的定义 -->
+  		<xsd:complexType name="userDetailType">
+  			<xsd:sequence>
+  				<xsd:element name="username" type="string"></xsd:element>
+  				<xsd:element name="password" type="string"></xsd:element>
+  			</xsd:sequence>
+  		</xsd:complexType>
+  	</xsd:schema>
+  </wsdl:types>
+  	
+  <wsdl:interface name="authenticationInterface">
+    <!-- 出错信息，已在types中定义 -->
+  	<wsdl:fault name="invalidDataFault" 
+  				element="tns:invalidDataError"></wsdl:fault>
+    <!-- 登录 -->
+    <wsdl:operation name="login"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:userDetail"/>
+      <wsdl:output messageLabel="Out" element="tns:userDetailResponse"/>
+    </wsdl:operation> 
+    
+    <!-- 注销 -->
+    <wsdl:operation name="logout"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="#none"/>
+      <wsdl:output messageLabel="Out" element="tns:logoutResponse"/>
+    </wsdl:operation> 
+  </wsdl:interface>
+  
+  <!-- soap绑定 -->
+  <wsdl:binding name="authenticationHTTPBinding" 
+  				interface="tns:authenticationInterface"
+  				type="http://www.w3.org/ns/wsdl/http"
+  				whttp:methodDefault="POST">
+    <wsdl:operation ref="tns:login"/>
+    <wsdl:operation ref="tns:logout"/>
+
+  </wsdl:binding>
+  
+  <!-- 
+  name设成具体的webservice类名，interface是上面定义的interface
+  binding用上面定义的binding
+  address是服务器的地址
+   -->
+  <wsdl:service name="authenticationService"
+  				interface="tns:authenticationInterface">
+  	<wsdl:endpoint name="authenticationEndpoint"
+  				   binding="authenticationHTTPBinding"
+  				   address="http://localhost:8080/authentication"/>    
+  </wsdl:service>
+  
+</wsdl:description>

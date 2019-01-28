@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl" 
+				  xmlns:http="http://www.w3.org/ns/wsdl/http" 
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+				  xmlns:tns="http://jw.nju.edu.cn/wsdl" 
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:ss="http://jw.nju.edu.cn/schema"
+				  targetNamespace="http://jw.nju.edu.cn/wsdl">
+				  
+				  
+  <!-- 
+  author:zhr
+  description要声明import的xsd的命名空间
+  types中定义各种参数
+   -->
+				  
+  <wsdl:types>
+  	<xsd:schema xmlns:myschema="http://jw.nju.edu.cn/schema"
+  				xmlns="http://www.w3.org/2001/XMLSchema"
+  				targetNamespace="http://jw.nju.edu.cn/wsdl">
+  		<xsd:import 
+  			namespace="http://jw.nju.edu.cn/schema"
+  			schemaLocation="../xsd/ScoreList.xsd"></xsd:import>
+  			
+  		<!-- 定义错误信息 -->
+  		<xsd:element name="invalidDataError" type="string"></xsd:element>
+  		
+  		<!-- get指查询成绩，request是学号，response是scorelist -->
+  		<xsd:element name="get" type="string"/>
+  		<xsd:element name="getResponse" type="myschema:课程成绩列表类型"></xsd:element>
+  		
+  	</xsd:schema>
+  </wsdl:types>
+  	
+  <!-- 查询 -->
+  <wsdl:interface name="getScoreInterface">
+    <!-- 出错信息，已在types中定义 -->
+  	<wsdl:fault name="invalidDataFault" 
+  				element="tns:invalidDataError"></wsdl:fault>
+    <!-- 查询得分 -->
+    <wsdl:operation name="getScore"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:get"/>
+      <wsdl:output messageLabel="Out" element="tns:getResponse"/>
+    </wsdl:operation> 
+  </wsdl:interface>
+  
+  <!-- http绑定 -->
+  <wsdl:binding name="getScoreHTTPBinding" 
+  				interface="tns:getScoreInterface"
+  				type="http://www.w3.org/ns/wsdl/http"
+  				http:methodDefault="GET">
+    <wsdl:operation ref="tns:getScore"
+    				http:location="{tns:get}"/>
+  </wsdl:binding>
+  
+  <!-- 
+  name设成具体的webservice类名，interface是上面定义的interface
+  binding用上面定义的binding
+  address是服务器的地址
+   -->
+  <wsdl:service name="getScoreService"
+  				interface="tns:getScoreInterface">
+  	<wsdl:endpoint name="getScoreEndpoint"
+  				   binding="getScoreHTTPBinding"
+  				   address="http://localhost:8080/getScore"/>    
+  </wsdl:service>
+  
+</wsdl:description>

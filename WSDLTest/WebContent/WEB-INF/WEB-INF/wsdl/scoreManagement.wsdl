@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl" 
+				  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+				  xmlns:tns="http://jw.nju.edu.cn/wsdl" 
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  targetNamespace="http://jw.nju.edu.cn/wsdl">
+				  
+				  
+  <!-- 
+  author:zhr
+  description要声明import的xsd的命名空间
+  types中定义各种参数
+   -->
+				  
+  <wsdl:types>
+  	<xsd:schema xmlns:myschema="http://jw.nju.edu.cn/schema"
+  				xmlns="http://www.w3.org/2001/XMLSchema"
+  				targetNamespace="http://jw.nju.edu.cn/wsdl">
+  		<xsd:import 
+  			namespace="http://jw.nju.edu.cn/schema"
+  			schemaLocation="../xsd/ScoreList.xsd"></xsd:import>
+  			
+  		<!-- 定义错误信息 -->
+  		<xsd:element name="invalidDataError" type="string"></xsd:element>
+  		
+  		<!-- get指查询成绩，request是学号，response是scorelist -->
+  		<xsd:element name="get" type="string"/>
+  		<xsd:element name="getResponse" type="myschema:课程成绩列表类型"></xsd:element>
+  		
+  		<!-- modify指修改成绩，request是学号,课程编号，得分，response是得分 -->
+  		<xsd:element name="modify" type="myschema:modifyType"/>
+  		<xsd:element name="modifyResponse" type="string"></xsd:element>
+  		
+  		<!-- modifyType的定义 -->
+  		<xsd:complexType name="modifyType">
+  			<xsd:sequence>
+  				<xsd:element name="studentID" type="string"></xsd:element>
+  				<xsd:element name="courseID" type="string"></xsd:element>
+  				<xsd:element name="score" type="string"></xsd:element>
+  			</xsd:sequence>
+  		</xsd:complexType>
+  		
+  		<!-- add指添加成绩，request是scoreList，response是string字符串 -->
+  		<xsd:element name="add" type="myschema:课程成绩列表类型"></xsd:element>
+  		<xsd:element name="addResponse" type="string"></xsd:element>
+  		
+  		<!-- delete指删除成绩，request是学号，response是string字符串 -->
+  		<xsd:element name="delete" type="string"/>
+  		<xsd:element name="deleteResponse" type="string"></xsd:element>
+  		
+  	</xsd:schema>
+  </wsdl:types>
+  	
+  <!-- 查询 -->
+  <wsdl:interface name="scoreManagementInterface">
+    <!-- 出错信息，已在types中定义 -->
+  	<wsdl:fault name="invalidDataFault" 
+  				element="tns:invalidDataError"></wsdl:fault>
+    <!-- 查询得分 -->
+    <wsdl:operation name="getScore"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:get"/>
+      <wsdl:output messageLabel="Out" element="tns:getResponse"/>
+    </wsdl:operation> 
+    
+    <!-- 修改成绩得分 -->
+    <wsdl:operation name="modifyScore"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:modify"/>
+      <wsdl:output messageLabel="Out" element="tns:modifyResponse"/>
+    </wsdl:operation>
+    
+    <!-- 添加得分 -->
+    <wsdl:operation name="addScore"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:add"/>
+      <wsdl:output messageLabel="Out" element="tns:addResponse"/>
+    </wsdl:operation>
+    
+    <!-- 删除得分 -->
+    <wsdl:operation name="deleteScore"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:delete"/>
+      <wsdl:output messageLabel="Out" element="tns:deleteResponse"/>
+    </wsdl:operation> 
+    
+    
+  </wsdl:interface>
+  
+  <!-- soap绑定 -->
+  <wsdl:binding name="scoreManagementSOAPBinding" 
+  				interface="tns:scoreManagementInterface"
+  				type="http://www.w3.org/ns/wsdl/soap"
+  				wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/">
+    <wsdl:operation ref="tns:getScore"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:modifyScore"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:addScore"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+    <wsdl:operation ref="tns:deleteScore"
+    				wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response" />
+  </wsdl:binding>
+  
+  <!-- 
+  name设成具体的webservice类名，interface是上面定义的interface
+  binding用上面定义的binding
+  address是服务器的地址
+   -->
+  <wsdl:service name="scoreManagementService"
+  				interface="tns:scoreManagementInterface">
+  	<wsdl:endpoint name="scoreManagementEndpoint"
+  				   binding="scoreManagementSOAPBinding"
+  				   address="http://localhost:8080/scoreManagement"/>    
+  </wsdl:service>
+  
+</wsdl:description>

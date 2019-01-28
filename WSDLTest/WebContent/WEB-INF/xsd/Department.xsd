@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+		targetNamespace="http://jw.nju.edu.cn/schema"
+		xmlns:tns="http://jw.nju.edu.cn/schema"
+		elementFormDefault="qualified">
+	
+	<!-- 定义了部门名称，type是string -->
+    <element name="部门" type="tns:部门类型"></element>
+	
+	<complexType name="部门类型">
+	   <sequence>
+	      <element name="部门名称" type="tns:部门名称类型"></element>
+		  <element name="部门编号" type="tns:部门编号类型"></element>
+		  <element name="部门类别" type="tns:部门类别类型"></element>
+	   </sequence>
+	</complexType>
+	
+	<simpleType name="部门名称类型">
+	   <restriction base="string">
+	      <minLength value="1" />
+		  <maxLength value="20" />
+	   </restriction>
+	</simpleType>
+	
+	<simpleType name="部门编号类型">
+	   <restriction base="unsignedInt">
+	      <minInclusive value="1" />
+		  <maxInclusive value="20" />
+	   </restriction>
+	</simpleType>
+	
+	<simpleType name="部门类别类型">
+	   <restriction base="string">
+	      <enumeration value="党群组织"></enumeration>
+		  <enumeration value="行政部门"></enumeration>
+		  <enumeration value="院系专业"></enumeration>
+		  <enumeration value="直属单位"></enumeration>
+	   </restriction>
+	</simpleType>
+
+</schema>

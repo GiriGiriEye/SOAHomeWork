@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:description xmlns:wsdl="http://www.w3.org/ns/wsdl" 
+				  xmlns:http="http://www.w3.org/ns/wsdl/http" 
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+				  xmlns:tns="http://jw.nju.edu.cn/wsdl" 
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+				  xmlns:ss="http://jw.nju.edu.cn/schema"
+				  targetNamespace="http://jw.nju.edu.cn/wsdl">
+				  
+				  
+  <!-- 
+  author:zhr
+  description要声明import的xsd的命名空间
+  types中定义各种参数
+   -->
+				  
+  <wsdl:types>
+  	<xsd:schema xmlns:myschema="http://jw.nju.edu.cn/schema"
+  				xmlns="http://www.w3.org/2001/XMLSchema"
+  				targetNamespace="http://jw.nju.edu.cn/wsdl">
+  		<xsd:import 
+  			namespace="http://jw.nju.edu.cn/schema"
+  			schemaLocation="../xsd/PersonInfo.xsd"></xsd:import>
+  			
+  		<!-- 定义错误信息 -->
+  		<xsd:element name="invalidDataError" type="string"></xsd:element>
+  		
+  		<!-- add指添加信息，request是personinfo，response是string字符串 -->
+  		<xsd:element name="add" type="myschema:个人基本信息类型"></xsd:element>
+  		<xsd:element name="addResponse" type="string"></xsd:element>
+
+  	</xsd:schema>
+  </wsdl:types>
+  	
+  <!-- 添加 -->
+  <wsdl:interface name="addPersonInfoInterface">
+  	<!-- 出错信息，已在types中定义 -->
+  	<wsdl:fault name="invalidDataFault" 
+  				element="tns:invalidDataError"></wsdl:fault>
+  				
+  	<!-- 添加信息 -->
+    <wsdl:operation name="addPersonInfo"
+    				pattern="http://www.w3.org/ns/wsdl/in-out">
+      <wsdl:input messageLabel="In" element="tns:add"/>
+      <wsdl:output messageLabel="Out" element="tns:addResponse"/>
+    </wsdl:operation>
+  </wsdl:interface>
+  
+  
+  <!-- http绑定 -->
+  <wsdl:binding name="addPersonInfoHTTPBinding" 
+  				interface="tns:addPersonInfoInterface"
+  				type="http://www.w3.org/ns/wsdl/http"
+  				http:methodDefault="POST">
+    <wsdl:operation ref="tns:addPersonInfo"
+    				http:location="{tns:add}"/>
+  </wsdl:binding>
+  
+  <!-- 
+  name设成具体的webservice类名，interface是上面定义的interface
+  binding用上面定义的binding
+  address是服务器的地址
+   -->
+  <wsdl:service name="addPersonInfoService"
+  				interface="tns:addPersonInfoInterface">
+  	<wsdl:endpoint name="addPersonInfoEndpoint"
+  				   binding="addPersonInfoHTTPBinding"
+  				   address="http://localhost:8080/addPersonInfo"/>    
+  </wsdl:service>
+  
+</wsdl:description>
